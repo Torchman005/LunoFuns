@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-acg-primary: #ff85a2;
+  --color-acg-primary-hover: #ff6b8f;
+  --color-acg-secondary: #74c0fc;
+  --color-acg-bg: #f8f9fa;
+  --color-acg-surface: #ffffff;
+  --color-acg-text-main: #495057;
+  --color-acg-text-muted: #868e96;
+  --color-acg-border: #e9ecef;
+}
+
+/* Global Reset and Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background-color: var(--color-acg-bg);
+  color: var(--color-acg-text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, li {
+  list-style: none;
+}
