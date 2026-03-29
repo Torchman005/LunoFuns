@@ -31,13 +31,29 @@ const handleLogout = () => {
   authStore.logout()
   message.success('已退出登录')
 }
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goToUpload = (e?: Event) => {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  if (!authStore.isLoggedIn()) {
+    message.warning('请先登录后再投稿')
+    handleLoginClick()
+    return
+  }
+  router.push('/upload')
+}
 </script>
 
 <template>
   <header class="sticky top-0 z-50 h-16 bg-white shadow-sm flex items-center">
     <div class="max-w-[2000px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between gap-4 lg:gap-8">
       <!-- Logo -->
-      <div class="text-xl sm:text-2xl font-extrabold text-acg-primary flex items-center gap-1 sm:gap-2 cursor-pointer font-['Nunito'] shrink-0">
+      <div @click="router.push('/')" class="text-xl sm:text-2xl font-extrabold text-acg-primary flex items-center gap-1 sm:gap-2 cursor-pointer font-['Nunito'] shrink-0">
         <i class="ri-blaze-line text-2xl sm:text-3xl"></i>
         <span class="hidden sm:inline-block">LunoFuns</span>
       </div>
@@ -111,11 +127,11 @@ const handleLogout = () => {
           </div>
         </n-popover>
 
-        <n-button type="primary" size="large" class="shadow-[0_4px_12px_rgba(255,133,162,0.3)] hover:-translate-y-0.5 transition-transform duration-200">
+        <n-button @click="goToUpload" type="primary" size="large" class="shadow-[0_4px_12px_rgba(255,133,162,0.3)] hover:-translate-y-0.5 transition-transform duration-200" style="z-index: 10; cursor: pointer;">
           <template #icon>
-            <i class="ri-upload-cloud-2-line"></i>
+            <i class="ri-upload-cloud-2-line pointer-events-none"></i>
           </template>
-          <span class="hidden sm:inline-block font-bold">投稿</span>
+          <span class="hidden sm:inline-block font-bold pointer-events-none">投稿</span>
         </n-button>
       </div>
     </div>

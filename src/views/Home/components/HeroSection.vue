@@ -16,9 +16,9 @@ defineProps<{
   <section class="flex flex-col lg:grid lg:grid-cols-[2.5fr_1fr] gap-4 md:gap-6 mb-8 md:mb-12">
     <!-- Main Banner -->
     <div class="rounded-2xl overflow-hidden relative shadow-sm cursor-pointer group aspect-[16/9] lg:aspect-auto lg:h-[400px]">
-      <img :src="banners[0].img" alt="Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <img :src="banners[0]?.img" alt="Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
       <div class="absolute bottom-0 left-0 right-0 pt-16 pb-6 px-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white">
-        <h2 class="text-xl md:text-2xl font-bold tracking-wide">{{ banners[0].title }}</h2>
+        <h2 class="text-xl md:text-2xl font-bold tracking-wide">{{ banners[0]?.title }}</h2>
       </div>
     </div>
     

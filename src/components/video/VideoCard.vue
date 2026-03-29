@@ -1,19 +1,26 @@
 <script setup lang="ts">
-defineProps<{
+import { useRouter } from 'vue-router'
+
+const props = defineProps<{
   video: {
     id: number
     title: string
     cover: string
     author: string
-    plays: string
+    plays: string | number
     date: string
     duration: string
   }
 }>()
+
+const router = useRouter()
+const goToDetail = () => {
+  router.push(`/video/${props.video.id}`)
+}
 </script>
 
 <template>
-  <div class="bg-white rounded-xl overflow-hidden transition-all duration-300 shadow-sm cursor-pointer flex flex-col group hover:-translate-y-1.5 hover:shadow-md">
+  <div @click="goToDetail" class="bg-white rounded-xl overflow-hidden transition-all duration-300 shadow-sm cursor-pointer flex flex-col group hover:-translate-y-1.5 hover:shadow-md">
     <!-- Cover Image & Duration -->
     <div class="relative aspect-video overflow-hidden">
       <img :src="video.cover" :alt="video.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />

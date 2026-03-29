@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { NModal, NForm, NFormItem, NInput, NButton, useMessage } from 'naive-ui'
-import { loginApi, registerApi } from '@/api/auth'
+import { authApi } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps<{
@@ -88,7 +88,7 @@ const handleSubmit = (e: Event) => {
 const handleLogin = async () => {
   try {
     loading.value = true
-    const res = await loginApi({
+    const res = await authApi.login({
       username: formData.value.username,
       password: formData.value.password
     })
@@ -115,7 +115,7 @@ const handleLogin = async () => {
 const handleRegister = async () => {
   try {
     loading.value = true
-    await registerApi({
+    await authApi.register({
       username: formData.value.username,
       password: formData.value.password,
       nickname: formData.value.nickname,

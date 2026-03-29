@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { NButton } from 'naive-ui'
 import NavBar from '@/components/layout/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
 import VideoCard from '@/components/video/VideoCard.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
+import { videoApi } from '@/api/video'
 
 const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('login')
@@ -14,80 +15,46 @@ const handleOpenAuth = (mode: 'login' | 'register') => {
   showAuthModal.value = true
 }
 
-const videoList = ref([
-  {
-    id: 1,
-    title: '【原神】2026交响音乐会 - 蒙德篇 完整版现场录制',
-    cover: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400',
-    author: 'Genshin_Official',
-    plays: '124.5万',
-    date: '2026-03-25',
-    duration: '01:24:10'
-  },
-  {
-    id: 2,
-    title: '超甜！书记舞翻跳~❤',
-    cover: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?auto=format&fit=crop&q=80&w=400',
-    author: '可爱小草莓',
-    plays: '89.2万',
-    date: '2026-03-26',
-    duration: '03:15'
-  },
-  {
-    id: 3,
-    title: '《进击的巨人》最终季 高燃混剪 MAD',
-    cover: 'https://images.unsplash.com/photo-1541562232579-512a21360020?auto=format&fit=crop&q=80&w=400',
-    author: 'Anime_MAD',
-    plays: '210万',
-    date: '2026-03-27',
-    duration: '04:30'
-  },
-  {
-    id: 4,
-    title: '新人UP主初投稿！请多指教~',
-    cover: 'https://images.unsplash.com/photo-1580477659142-083f510ba1b6?auto=format&fit=crop&q=80&w=400',
-    author: '星野Akari',
-    plays: '5.6万',
-    date: '昨天',
-    duration: '10:02'
-  },
-  {
-    id: 5,
-    title: '【塞尔达】那些绝美的风景与瞬间',
-    cover: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&q=80&w=400',
-    author: 'Link_Explorer',
-    plays: '45万',
-    date: '3天前',
-    duration: '08:45'
-  },
-  {
-    id: 6,
-    title: '手作Vlog：用黏土做一只可爱的星之卡比！',
-    cover: 'https://images.unsplash.com/photo-1611558709798-e009c8fd7706?auto=format&fit=crop&q=80&w=400',
-    author: '手工小达人',
-    plays: '12.3万',
-    date: '03-20',
-    duration: '15:20'
-  },
-  {
-    id: 7,
-    title: '【日常】秋叶原圣地巡礼！带你逛遍手办店',
-    cover: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&q=80&w=400',
-    author: 'Travel_Japan',
-    plays: '34万',
-    date: '1周前',
-    duration: '22:15'
-  },
-  {
-    id: 8,
-    title: '治愈向环境音：夏日午后的蝉鸣与微风',
-    cover: 'https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?auto=format&fit=crop&q=80&w=400',
-    author: 'Sleep_ASMR',
-    plays: '88万',
-    date: '2026-03-15',
-    duration: '01:00:00'
+const videoList = ref<any[]>([])
+const loading = ref(true)
+
+const getImageUrl = (url: string) => {
+  if (!url) return ''
+  // 修正后端返回的url。有时候 minio 返回的 url 是 localhost:9000 开头，但在前端如果用了代理，可能需要处理。
+  // 不过通常情况下如果是完整的 http URL，可以直接使用
+  return url
+}
+
+const fetchVideos = async () => {
+  try {
+    loading.value = true
+    const res = await videoApi.getVideoList({ page: 1, page_size: 20 })
+    videoList.value = res.data.data.items.map(v => ({
+      id: v.id,
+      title: v.title,
+      cover: getImageUrl(v.cover_url),
+      author: 'Up主_' + v.user_id, // TODO: replace with real user info if available
+      plays: v.view_count,
+      date: new Date(v.created_at).toLocaleDateString(),
+      duration: formatDuration(v.duration)
+    }))
+  } catch (error) {
+    console.error('获取视频列表失败:', error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+const formatDuration = (seconds: number) => {
+  if (!seconds) return '00:00'
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+}
+
+onMounted(() => {
+  fetchVideos()
+})
 </script>
 
 <template>
@@ -96,7 +63,7 @@ const videoList = ref([
 
     <!-- Changed from max-w-[1400px] to full width with max constraints only on ultrawide -->
     <main class="w-full max-w-[2000px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 flex-1">
-      <HeroSection :recommendations="videoList" />
+      <HeroSection v-if="videoList.length > 0" :recommendations="videoList" />
 
       <!-- Video Grid Section -->
       <section>
