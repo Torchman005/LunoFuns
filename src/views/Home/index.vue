@@ -4,6 +4,15 @@ import { NButton } from 'naive-ui'
 import NavBar from '@/components/layout/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
 import VideoCard from '@/components/video/VideoCard.vue'
+import AuthModal from '@/components/auth/AuthModal.vue'
+
+const showAuthModal = ref(false)
+const authMode = ref<'login' | 'register'>('login')
+
+const handleOpenAuth = (mode: 'login' | 'register') => {
+  authMode.value = mode
+  showAuthModal.value = true
+}
 
 const videoList = ref([
   {
@@ -83,7 +92,7 @@ const videoList = ref([
 
 <template>
   <div class="min-h-screen flex flex-col bg-acg-bg">
-    <NavBar />
+    <NavBar @open-auth="handleOpenAuth" />
 
     <!-- Changed from max-w-[1400px] to full width with max constraints only on ultrawide -->
     <main class="w-full max-w-[2000px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 flex-1">
@@ -114,5 +123,7 @@ const videoList = ref([
         </div>
       </section>
     </main>
+    
+    <AuthModal v-model:show="showAuthModal" :initial-mode="authMode" />
   </div>
 </template>
